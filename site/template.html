@@ -21,7 +21,7 @@
   /* Before paint, so a remembered dark theme never flashes light first */
   (function () {
     try {
-      var t = localStorage.getItem("gda-theme");
+      var t = localStorage.getItem("0trm-theme");
       if (t === "dark" || t === "light") document.documentElement.dataset.theme = t;
     } catch (e) {}
   })();
@@ -41,7 +41,7 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --bg: #282c34;
-    --text: #abb2bf;
+    --text: #d7dae0;
     --muted: #9da5b4;
     --link: #61afef;
     --visited: #c678dd;
@@ -53,7 +53,7 @@
 }
 :root[data-theme="dark"] {
   --bg: #282c34;
-  --text: #abb2bf;
+  --text: #d7dae0;
   --muted: #9da5b4;
   --link: #61afef;
   --visited: #c678dd;
@@ -80,10 +80,17 @@ a:focus-visible, button:focus-visible, summary:focus-visible { outline: 2px soli
 
 /* Contents: every habit, numbered, with the one in view marked */
 .navtop { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--muted); padding-bottom: 6px; border-bottom: 1px solid var(--rule); }
-.toggle { display: inline-flex; gap: 2px; }
+/* Theme: one button showing the theme a click switches to */
 .toggle button { width: 30px; height: 30px; display: inline-flex; align-items: center; justify-content: center; padding: 0; background: none; border: 0; color: var(--muted); cursor: pointer; }
-.toggle button[aria-pressed="true"], .toggle button:hover { color: var(--text); }
+.toggle button:hover { color: var(--text); }
 .toggle svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
+.toggle .to-light { display: none; }
+:root[data-theme="dark"] .toggle .to-dark { display: none; }
+:root[data-theme="dark"] .toggle .to-light { display: inline-flex; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .toggle .to-dark { display: none; }
+  :root:not([data-theme="light"]) .toggle .to-light { display: inline-flex; }
+}
 .toc summary { cursor: pointer; font-size: 12px; color: var(--muted); padding: 6px 0 0; }
 .toc ol { list-style: none; margin: 6px 0 0; padding: 0; font-size: 12px; line-height: 1.35; }
 .toc li a { display: block; padding: 3px 6px; color: var(--text); text-decoration: none; border-left: 2px solid transparent; }
@@ -123,9 +130,9 @@ footer p { margin: 0; }
 <nav class="toc" aria-label="Contents">
   <div class="navtop">
     <a target="_blank" rel="noopener" href="https://0trm.dev/">0trm.dev</a>
-    <span class="toggle" role="group" aria-label="Theme">
-      <button type="button" data-set="light" aria-label="Light theme"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="3.6"/><path d="M10 1.5v2.5M10 16v2.5M1.5 10H4M16 10h2.5M4 4l1.8 1.8M14.2 14.2 16 16M4 16l1.8-1.8M14.2 5.8 16 4"/></svg></button>
-      <button type="button" data-set="dark" aria-label="Dark theme"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M16 12.6A6.8 6.8 0 0 1 7.4 4a6.8 6.8 0 1 0 8.6 8.6z"/></svg></button>
+    <span class="toggle">
+      <button type="button" class="to-dark" aria-label="Switch to dark theme"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M16 12.6A6.8 6.8 0 0 1 7.4 4a6.8 6.8 0 1 0 8.6 8.6z"/></svg></button>
+      <button type="button" class="to-light" aria-label="Switch to light theme"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="3.6"/><path d="M10 1.5v2.5M10 16v2.5M1.5 10H4M16 10h2.5M4 4l1.8 1.8M14.2 14.2 16 16M4 16l1.8-1.8M14.2 5.8 16 4"/></svg></button>
     </span>
   </div>
   <details open>
@@ -144,22 +151,15 @@ footer p { margin: 0; }
 </div>
 <script>
 (function () {
-  // Theme: the system's until a button is pressed, then the pressed one, remembered
+  // Theme: the system's until the button is pressed; the choice is shared with the rest of 0trm.dev
   var root = document.documentElement, mq = matchMedia("(prefers-color-scheme: dark)");
-  var buttons = document.querySelectorAll(".toggle button");
-  function now() { return root.dataset.theme || (mq.matches ? "dark" : "light"); }
-  function paint() {
-    buttons.forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.set === now())); });
-  }
-  buttons.forEach(function (b) {
+  document.querySelectorAll(".toggle button").forEach(function (b) {
     b.addEventListener("click", function () {
-      root.dataset.theme = b.dataset.set;
-      try { localStorage.setItem("gda-theme", b.dataset.set); } catch (e) {}
-      paint();
+      var next = (root.dataset.theme || (mq.matches ? "dark" : "light")) === "dark" ? "light" : "dark";
+      root.dataset.theme = next;
+      try { localStorage.setItem("0trm-theme", next); } catch (e) {}
     });
   });
-  mq.addEventListener("change", paint);
-  paint();
 
   // Contents: folded on phones, closed again after a pick there
   var toc = document.querySelector(".toc"), details = toc.querySelector("details");
