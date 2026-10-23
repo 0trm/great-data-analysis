@@ -1,4 +1,4 @@
-# Good Data Analysis
+# Great Data Analysis
 
 *The habits of careful analysts, re-versioned for the agentic era.*
 

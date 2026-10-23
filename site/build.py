@@ -1,4 +1,4 @@
-# Build the page at 0trm.dev/good-data-analysis/ from README.md.
+# Build the page at 0trm.dev/great-data-analysis/ from README.md.
 # Run from the repo root: python3 site/build.py  (needs markdown-it-py); it writes _site/.
 
 # %%
