@@ -67,11 +67,12 @@ With enough data, everything is statistically significant. The real question is 
 ```
                   0 = no effect
                   │
- A                 ├●┤            "significant", too small to matter
- B    ├───────────┼────●───────┤  "not significant", could be large
+ A                ●                 +0.1%  "significant", too small to matter
+ B         ├──────┼───●──────────┤  +4%    "not significant", could be large
                   │
+      −10%        0       +10%      +20%
 
- ● = estimate   ├──┤ = confidence interval
+ ● = estimate   ├──┤ = 95% confidence interval
 ```
 
 ### Check consistency over time
@@ -92,11 +93,12 @@ Systems drift. Tracking that was verified at launch breaks quietly in month thre
 Almost every analysis starts with exclusions: internal traffic, bots, spam, users out of scope. Say what you filter and count what each filter removes. The cleanest way is to compute your metrics for the excluded population too. In my traffic reporting, the spam share is a headline number, not a hidden WHERE clause.
 
 ```
- raw pageviews          1,000,000
-   – internal traffic      12,400
-   – known bots           214,000
-   – spam rule             97,300
- reported                 676,300
+                                   % of raw
+ raw pageviews          1,000,000      100%
+   – internal traffic      12,400      1.2%
+   – known bots           214,000     21.4%
+   – spam rule             97,300      9.7%
+ reported                 676,300     67.6%
 
  every minus is a decision. count them all.
 ```
