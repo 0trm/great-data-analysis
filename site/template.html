@@ -13,6 +13,11 @@
 <meta property="og:url" content="https://0trm.dev/great-data-analysis/">
 <meta property="og:title" content="Great Data Analysis">
 <meta property="og:description" content="The habits of careful data analysts, re-versioned for the agentic era.">
+<meta property="og:image" content="https://0trm.dev/img/flow-og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Short dashes laid along a flowing field">
+<meta name="twitter:card" content="summary_large_image">
 <!-- The 🔍 from the repo description, from Noto Emoji (Apache 2.0) -->
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="icon" href="favicon.ico" sizes="16x16 32x32 48x48">
@@ -28,14 +33,14 @@
 </script>
 <style>
 :root {
-  --bg: #fcfcfa;
-  --text: #1a1a1a;
-  --muted: #5a5a5a;
-  --link: #0645ad;
-  --visited: #5a3696;
-  --bar: #ebebe5;
-  --rule: #c4c4bc;
-  --code: #f3f3ee;
+  --bg: #fafafa;
+  --text: #383a42;
+  --muted: #696c77;
+  --link: #155aef;
+  --visited: #a626a4;
+  --bar: #f0f0f0;
+  --rule: #d6d6d7;
+  --code: #f2f2f2;
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
@@ -72,7 +77,9 @@ body {
   font: 14px/1.6 Verdana, Geneva, Tahoma, sans-serif;
   overflow-wrap: break-word;
 }
-a { color: var(--link); }
+/* Underlines 1px thick, a little below the text, in 40% of the link's color, full on hover */
+a { color: var(--link); text-underline-offset: .2em; text-decoration-thickness: 1px; text-decoration-color: color-mix(in srgb, currentColor 40%, transparent); }
+a:hover { text-decoration-color: currentColor; }
 a:visited { color: var(--visited); }
 a:focus-visible, button:focus-visible, summary:focus-visible { outline: 2px solid var(--link); outline-offset: 1px; }
 
@@ -93,7 +100,8 @@ a:focus-visible, button:focus-visible, summary:focus-visible { outline: 2px soli
 }
 .toc summary { cursor: pointer; font-size: 12px; color: var(--muted); padding: 6px 0 0; }
 .toc ol { list-style: none; margin: 6px 0 0; padding: 0; font-size: 12px; line-height: 1.35; }
-.toc li a { display: block; padding: 3px 6px; color: var(--text); text-decoration: none; border-left: 2px solid transparent; }
+.toc li a { display: grid; grid-template-columns: 2.6em 1fr; padding: 4px 6px; color: var(--text); text-decoration: none; border-left: 2px solid transparent; }
+.toc li a:focus-visible { outline-offset: -2px; }
 .toc li a:hover { text-decoration: underline; }
 .toc li.l2 a { font-weight: bold; margin-top: 8px; background: var(--bar); }
 .toc li.l3 a { color: var(--muted); }
@@ -121,7 +129,8 @@ footer p { margin: 0; }
 @media (max-width: 1023px) {
   .layout { padding: 4px 16px 24px; }
   .toc { margin-bottom: 8px; }
-  pre { font-size: 11px; margin-left: -16px; margin-right: -16px; }
+  pre { font-size: clamp(9px, calc((100vw - 20px) / 38.6), 11px); padding-left: 10px; padding-right: 10px; margin-left: -16px; margin-right: -16px; }
+  main ul, main ol { padding-left: 24px; }
 }
 </style>
 </head>
@@ -129,7 +138,7 @@ footer p { margin: 0; }
 <div class="layout">
 <nav class="toc" aria-label="Contents">
   <div class="navtop">
-    <a target="_blank" rel="noopener" href="https://0trm.dev/">0trm.dev</a>
+    <a href="https://0trm.dev/">0trm.dev</a>
     <span class="toggle">
       <button type="button" class="to-dark" aria-label="Switch to dark theme"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M16 12.6A6.8 6.8 0 0 1 7.4 4a6.8 6.8 0 1 0 8.6 8.6z"/></svg></button>
       <button type="button" class="to-light" aria-label="Switch to light theme"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="3.6"/><path d="M10 1.5v2.5M10 16v2.5M1.5 10H4M16 10h2.5M4 4l1.8 1.8M14.2 14.2 16 16M4 16l1.8-1.8M14.2 5.8 16 4"/></svg></button>
@@ -146,7 +155,7 @@ footer p { margin: 0; }
 <main>
 {{content}}
 </main>
-<footer><p>Tomás Ravalli · adapted from Patrick Riley's <i>Good Data Analysis</i> (2019) · <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> · <a target="_blank" rel="noopener" href="https://github.com/0trm/great-data-analysis">source</a></p></footer>
+<footer><p>Tomás Ravalli · adapted from Patrick Riley's <i>Good Data Analysis</i> (2019) · <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> · <a target="_blank" rel="noopener" href="https://github.com/0trm/great-data-analysis">source</a> · <a href="#top">top</a></p></footer>
 </div>
 </div>
 <script>
@@ -176,7 +185,7 @@ footer p { margin: 0; }
   var marked = null, queued = false;
   function mark() {
     queued = false;
-    var line = innerHeight / 5, current = null;
+    var left = document.documentElement.scrollHeight - innerHeight - scrollY, line = innerHeight / 5 + Math.max(0, innerHeight * .8 - left), current = null;
     heads.forEach(function (h) { if (h.getBoundingClientRect().top <= line) current = h; });
     var a = current && links[current.id];
     if (a === marked) return;
