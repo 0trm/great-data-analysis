@@ -45,6 +45,8 @@ for level, _, hid in heads:
         numbers[hid] = f"{section}.{habit}"
 
 content = md.renderer.render(tokens, md.options, {})
+# Code blocks scroll sideways on a phone, so the keyboard must reach them
+content = content.replace("<pre>", '<pre tabindex="0">')
 content = re.sub(
     r'<h([23]) id="([^"]+)">',
     lambda m: m.group(0) + (f'<span class="no">{numbers[m.group(2)]}</span> ' if m.group(2) in numbers else ""),
